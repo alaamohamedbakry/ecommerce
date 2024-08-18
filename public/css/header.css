@@ -1,0 +1,11 @@
+#dropdownUserButton, #dropdownCustomerButton {
+    transition: background-color 0.3s ease;
+}
+
+#dropdownUserButton:hover, #dropdownCustomerButton:hover {
+    background-color: #4a5568; /* يمكنك تغيير هذا اللون حسب تفضيلك */
+}
+
+#dropdownUserMenu a, #dropdownCustomerMenu a {
+    transition: color 0.3s ease, background-color 0.3s ease;
+}

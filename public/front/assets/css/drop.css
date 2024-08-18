@@ -1,0 +1,29 @@
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        margin-top: 0.5rem;
+        min-width: 12rem;
+        padding: 0.5rem 0;
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 0.25rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+        z-index: 1000;
+    }
+
+    .dropdown-menu a {
+        display: block;
+        padding: 0.25rem 1.5rem;
+        clear: both;
+        font-weight: 400;
+        color: #212529;
+        text-align: inherit;
+        white-space: nowrap;
+        background-color: transparent;
+        border: 0;
+    }
+
+    .dropdown-menu a:hover {
+        background-color: #f8f9fa;
+    }
