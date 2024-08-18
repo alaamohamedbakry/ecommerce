@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 
 
-//iam here 
+
 class CustomerController extends Controller
 {
     /**
