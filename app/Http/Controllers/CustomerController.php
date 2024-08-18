@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Password;
 
+
+//iam here 
 class CustomerController extends Controller
 {
     /**
@@ -102,7 +104,7 @@ class CustomerController extends Controller
 
 
     public function resetpassword(Request $request ,$token=null){
-     
+
         $check_token = DB::table('password_reset_tokens')
         ->where(['token'=>$token,'guard'=>ConstGuards::CUSTOMER])
         ->first();
