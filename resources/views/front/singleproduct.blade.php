@@ -158,6 +158,14 @@
         </div>
     </div>
     <!-- ./description -->
+    <!-- qr code-->
+    <div class="container pb-16">
+    <h3>Scan this QR Code to view this product:</h3>
+    <div>
+        {!! $qrcode !!}
+    </div>
+    </div>
+      <!-- ./qr code-->
 
 
         <!-- related product -->

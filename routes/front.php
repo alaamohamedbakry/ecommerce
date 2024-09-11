@@ -34,7 +34,7 @@ Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout')->
 
 Route::get('/deleteproduct/{cart}', [CartController::class, 'delete'])->name('deleteproduct');
 
-Route::get('/singleproduct/{productid}', [FirstController::class, 'showproduct'])->name('singleproduct');
+Route::get('/singleproduct/{product}', [FirstController::class, 'showproduct'])->name('singleproduct');
 
 Route::post('addproducttocart/{productid}', [CartController::class, 'addproducttocart'])->name('addproducttocart')->middleware('customer');
 Route::post('update-quantity', [CartController::class, 'updateQuantity'])->name('update.quantity');

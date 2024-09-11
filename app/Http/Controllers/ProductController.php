@@ -10,6 +10,7 @@ use GuzzleHttp\Handler\Proxy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str; // Import the Str class
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Stringable;
 
 class ProductController extends Controller
@@ -65,7 +66,8 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = product::findorfail($id);
-        return view('products.show', ['product' => $product]);
+
+        return view('products.show',compact('product')) ;
     }
     public function edit(Product $product)
     {
@@ -87,14 +89,21 @@ class ProductController extends Controller
             'catergories_id' => 'required|numeric|exists:catergories,id'
         ]);
         try {
-            $product->update($request->except('_token'));
-            if ($product->image && $request->file('image')) {
-                Storage::delete($product->image);
+            $product->update($request->except('_token', 'image'));
+            if ($request->hasFile('image')) {
+                // حذف الصورة القديمة إذا كانت موجودة
+                if ($product->image && Storage::exists($product->image)) {
+                    Storage::delete($product->image);
+                }
+
+                // رفع الصورة الجديدة وتحديث مسارها
                 $product->image = Storage::put('product_image', $request->file('image'));
-            } elseif ($request->file('image')) {
-                $product->image = storage::put('product_image', $request->file('image'));
+
+                // حفظ مسار الصورة الجديد
+                $product->save();
             }
-            return to_route('products.index')->with('status', 'product updated');
+
+            return to_route('products.index')->with('status', 'Product updated successfully.');
         } catch (Exception $a) {
             return to_route('products.index')->with('status', $a->getMessage());
         }

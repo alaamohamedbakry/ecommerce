@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Review;
 use App\Models\Socialnetwork;
 use Illuminate\Http\Request;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class FirstController extends Controller
 {
@@ -61,45 +62,38 @@ class FirstController extends Controller
     }
 
     public function showproduct($productid)
+{
+    // جلب تفاصيل المنتج مع الصور
+    $product = Product::with('productphoto')->findOrFail($productid);
+
+    // توليد QR Code لرابط المنتج
+    $productUrl = route('products.show', ['product' => $product->id]);
+    $qrcode = QrCode::size(300)->generate($productUrl);
+
+    // حساب النطاق السعري للمنتجات ذات الصلة
+    $priceRange = 0.20;
+    $minPrice = $product->price * (1 - $priceRange);
+    $maxPrice = $product->price * (1 + $priceRange);
+    $relatedproducts = Product::where('catergories_id', $product->catergories_id)
+        ->where('id', '!=', $productid)
+        ->whereBetween('price', [$minPrice, $maxPrice])
+        ->inRandomOrder()
+        ->limit(4)
+        ->get();
+
+    return view('front.singleproduct', compact('product', 'relatedproducts', 'qrcode'));
+}
+
+
+    public function show()
     {
-        $product = Product::with('productphoto')->find($productid);
-        $priceRange = 0.20;
-        $minPrice = $product->price * (1 - $priceRange);
-        $maxPrice = $product->price * (1 + $priceRange);
-        $relatedproducts = Product::where('catergories_id', $product->catergories_id)
-            ->where('id', '!=', $productid)
-            ->whereBetween('price', [$minPrice, $maxPrice])
-            ->inRandomOrder()
-            ->limit(4)
-            ->get();
-        return view('front.singleproduct', ['product' => $product,'relatedproducts'=>$relatedproducts]);
+        $socialNetworks = Socialnetwork::first();
+        return view('front.contact', compact('socialNetworks'));
     }
 
+    public function about_us()
+    {
 
-    public function show(){
-        $socialNetworks = Socialnetwork::first(); 
-    return view('front.contact',compact('socialNetworks'));
+        return view('front.about-us');
     }
-    
-    public function about_us(){
-      
-    return view('front.about-us');
-    }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

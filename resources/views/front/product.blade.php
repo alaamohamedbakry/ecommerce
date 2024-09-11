@@ -9,6 +9,22 @@
             height: 350px; /* يمكنك تعديل هذا حسب الاحتياج */
             object-fit: cover; /* لضبط الصورة داخل الحاوية مع الحفاظ على الأبعاد */
         }
+        .add-to-cart-btn {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            background-color: #f43f5e;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 0 0 8px 8px;
+            cursor: pointer;
+        }
+        .add-to-cart-btn:hover {
+            background-color: white;
+            color: #f43f5e;
+            border: 1px solid #f43f5e;
+        }
     </style>
 </head>
 <!-- breadcrumb -->
@@ -31,22 +47,9 @@
         <div class="overflow-hidden bg-white rounded shadow group">
             <div class="relative">
                 <img src="{{asset('storage/'. $product->image)}}" alt="product 1" class="product-image">
-                <div
-                    class="absolute inset-0 flex items-center justify-center gap-2 transition bg-black opacity-0 bg-opacity-40 group-hover:opacity-100">
-                    <a href="#"
-                        class="flex items-center justify-center h-8 text-lg text-white transition rounded-full w-9 bg-primary hover:bg-gray-800"
-                        title="view product">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </a>
-                    <a href="#"
-                        class="flex items-center justify-center h-8 text-lg text-white transition rounded-full w-9 bg-primary hover:bg-gray-800"
-                        title="add to wishlist">
-                        <i class="fa-solid fa-heart"></i>
-                    </a>
-                </div>
             </div>
             <div class="px-4 pt-4 pb-3">
-                <a href="#">
+                <a href="{{ route('singleproduct',$product->id) }}">
                     <h4 class="mb-2 text-xl font-medium text-gray-800 uppercase transition hover:text-primary">
                         {{ $product->name }}</h4>
                 </a>
@@ -65,9 +68,10 @@
                     <div class="ml-3 text-xs text-gray-500"> Quantity:{{ $product->quntaity }}</div>
                 </div>
             </div>
-            <a href="#"
-                class="block w-full py-1 text-center text-white transition border rounded-b bg-primary border-primary hover:bg-transparent hover:text-primary">Add
-                to cart</a>
+            <form method="POST" action="{{ route('addproducttocart', $product->id) }}">
+                @csrf
+                <button type="submit" class="add-to-cart-btn">Add to cart</button>
+            </form>
         </div>
         @endforeach
     </div>
