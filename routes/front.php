@@ -10,6 +10,7 @@ use App\Http\Controllers\Customer\RegisterCustomerController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\FirstController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -46,6 +47,12 @@ Route::get('/contact-us',[FirstController::class,'show'])->name('contact_us');
 Route::get('/about-us',[FirstController::class,'about_us'])->name('about_us');
 
 
+// مسار لإنشاء جلسة الدفع
+Route::post('/session', [PaymentController::class, 'session'])->name('stripe.session');
+
+// مسارات لنجاح الدفع أو إلغائه
+Route::get('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
+Route::get('/payment/error', [PaymentController::class, 'error'])->name('payment.error');
 
 
 
@@ -65,6 +72,7 @@ Route::prefix('customer')->group(function () {
     Route::post('/register', [CustomerRegisterController::class, 'store'])->name('customer.register');
 
     Route::get('/logout', [LoginController::class, 'logout'])->name('customer_logout');
+
 });
 
 

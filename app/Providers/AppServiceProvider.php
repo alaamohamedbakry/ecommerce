@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Http\Services\FatooraServices;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Session;
@@ -14,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+       //
     }
 
     /**

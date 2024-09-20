@@ -16,7 +16,20 @@
 
 <style>
 
+@keyframes moveBg {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
 
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(-30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
     .add-to-cart-btn {
         display: block;
         width: 100%;
@@ -38,41 +51,57 @@
 
 <body>
     @if (session('success'))
-        <div class="modal show" id="myModal" tabindex="-1" role="dialog" style="display: block;">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <!-- Modal Body -->
-                    <div class="modal-body">
-                        <p>{{ session('success') }}</p>
+    <div class="modal fade show" id="myModal" tabindex="-1" role="dialog" style="display: block;" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="border-0 shadow-lg modal-content rounded-3" style="background: linear-gradient(135deg, #6ed3cf 0%, #9068be 100%); color: white;">
+                <!-- Modal Header -->
+                <div class="border-0 modal-header" style="border-bottom: none;">
+                    <h5 class="text-center modal-title w-100" style="font-weight: bold;">🎉 Success!</h5>
+                    <button type="button" class="text-white close" data-dismiss="modal" aria-label="Close" id="closeModalBtn">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- Modal Body -->
+                <div class="text-center modal-body">
+                    <div class="py-3">
+                        <i class="mb-3 text-white fas fa-check-circle fa-4x animated bounceIn"></i>
                     </div>
-                    <!-- Modal Footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" id="closeModalBtn">Close</button>
-                    </div>
+                    <p class="h5">{{ session('success') }}</p>
+                </div>
+                <!-- Modal Footer -->
+                <div class="border-0 modal-footer d-flex justify-content-center">
+                    <button type="button" class="px-5 py-2 shadow-sm btn btn-light text-uppercase rounded-pill" id="gotItBtn" style="background-color: #fff; color: #6ed3cf;">Got it!</button>
                 </div>
             </div>
         </div>
-    @endif
+    </div>
+
+    <script>
+        // Close modal when 'Got it!' or 'Close' button is clicked
+        document.getElementById('gotItBtn').addEventListener('click', function() {
+            document.getElementById('myModal').style.display = 'none';
+        });
+
+        document.getElementById('closeModalBtn').addEventListener('click', function() {
+            document.getElementById('myModal').style.display = 'none';
+        });
+    </script>
+@endif
+
 
     <div>
         <!-- banner -->
-        <div class="bg-center bg-no-repeat bg-cover py-36"
-            style="background-image: url({{ asset('front/assets/images/24-248789_ecommerce-website-development-e-commerce-banner-design-png.png') }});">
-            <div class="container">
-                <h1 class="mb-4 text-6xl font-medium text-gray-800 capitalize">
-                    best collection for <br> your clothing
-                </h1>
-                <p>E-commerce has revolutionized the way businesses operate and interact with customers. <br>
-                    By leveraging digital technologies and innovative strategies, companies can create seamless and
-                    engaging shopping experiences, drive sales growth, and build lasting relationships with their
-                    customers.</p>
-                <div class="mt-12">
-                    <a href="{{ route('shop') }}"
-                        class="px-8 py-3 font-medium text-white border rounded-md bg-primary border-primary hover:bg-transparent hover:text-primary">Shop
-                        Now</a>
-                </div>
+        <div class="hero-section" style="background: linear-gradient(135deg, #6ed3cf 0%, #9068be 100%); height: 50vh; display: flex; justify-content: center; align-items: center; color: white; text-align: center; position: relative; overflow: hidden;">
+            <div class="animated-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%); animation: moveBg 10s infinite alternate;"></div>
+
+            <div class="content" style="z-index: 1;">
+                <h1 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 20px;  animation: fadeIn 2s;">the best collection of bags</h1>
+                <p style="font-size: 1rem; margin-bottom: 20px; animation: fadeInUp 3s;">Discover Our Web Site</p>
+                <a href="/shop" class="btn btn-lg" style="background-color: #ff3366; border: none; border-radius: 50px; padding: 15px 30px; font-size: 1.25rem; color: white; transition: transform 0.3s ease, box-shadow 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';">Shop Now </a>
             </div>
         </div>
+
+
         <!-- ./banner -->
 
         <!-- features -->

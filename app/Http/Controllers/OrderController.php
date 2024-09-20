@@ -12,9 +12,44 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Middleware\Customer as CustomerMiddleware;
 use App\Models\Orderdetails;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class OrderController extends Controller
 {
+
+
+    public function createPayment($orderId)
+    {
+        // الحصول على الطلب من قاعدة البيانات
+        $order = Order::with('customer')->findOrFail($orderId);
+
+        // إعداد بيانات الدفع
+        $data = [
+            'InvoiceAmount'   => $order->total_amount, // المبلغ الإجمالي للطلب
+            'CustomerEmail'   => $order->customer->email,
+            'CustomerName'    => $order->customer->name,
+            'CallBackUrl'     => route('payment.callback'), // رابط العودة بعد الدفع
+            'ErrorUrl'        => route('payment.error'),    // رابط في حالة وجود خطأ
+        ];
+
+        // إرسال الطلب إلى MyFatoorah
+        $response = Http::withHeaders([
+            'authorization' => 'Bearer ' . env('MYFATOORAH_API_KEY'),
+            'Content-Type'  => 'application/json',
+        ])->post(env('MYFATOORAH_API_URL'), $data);
+
+        // معالجة الرد
+        $responseBody = $response->json();
+
+        if ($response->successful() && isset($responseBody['Data']['InvoiceURL'])) {
+            // إعادة توجيه العميل إلى رابط الدفع
+            return redirect($responseBody['Data']['InvoiceURL']);
+        } else {
+            // في حالة وجود خطأ
+            return back()->with('error', 'حدث خطأ أثناء إنشاء الدفع');
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -59,7 +94,9 @@ class OrderController extends Controller
             'customer_id' => 'required|numeric|exists:customers,id'
         ]);
         try {
-            order::create($request->except('_token'));
+          $order=  order::create($request->except('_token'));
+            return $this->createPayment($order->id);
+
             return to_route('orders.index')->with('status', 'NEW ORDER ADDED');
         } catch (Exception $a) {
             return to_route('orders.index')->with('status', $a->getMessage());
@@ -113,12 +150,16 @@ class OrderController extends Controller
     {
         try {
             $detail = Orderdetails::findOrFail($id);
+            $orderId = $detail->order_id;
             $detail->delete();
-            return redirect()->route('orders.show', $detail->order_id)->with('status', 'Detail deleted successfully!');
-        } catch (\Exception $e) {
-            return redirect()->route('orders.show', $detail->order_id)->with('status', 'Error: ' . $e->getMessage());
+
+            return redirect()->route('orders.show', $orderId)->with('status', 'Detail deleted successfully!');
+
+        } catch (Exception $e) {
+            return redirect()->route('orders.index')->with('status', 'Error: ' . $e->getMessage());
         }
     }
+
 
     public function totalorders(){
         $totalorder= Order::count();
@@ -126,12 +167,12 @@ class OrderController extends Controller
     }
     public function getEarnings()
     {
-       
+
             $totalEarnings = Orderdetails::selectRaw('SUM(price * quntaity) as  total_earnings')
             ->value('total_earnings');
 
             return response()->json(['totalEarnings'=>$totalEarnings]);
-              
+
     }
     public function chartearnings(){
         try {
@@ -139,11 +180,11 @@ class OrderController extends Controller
                 ->groupBy('month')
                 ->orderBy('month')
                 ->get();
-    
+
             return response()->json($data);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
-    
+
     }
 }

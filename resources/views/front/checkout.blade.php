@@ -72,9 +72,14 @@
                             <label for="email" class="text-gray-600">Email address</label>
                             <input type="email" name="email" id="email" class="input-box">
                         </div>
-
                         <div class="flex mt-2 justify-content-end ">
-                            <button type="submit" class= "add-to-cart-btn small-button">Place Order</button>
+                            <div class="flex mt-2 justify-content-end ">
+                                <button type="button" onclick="proceedToPayment()" class="btn btn-primary">Proceed to Payment</button>
+                                <form id="paymentForm" action="/session" method="POST" style="display: none;">
+                                    @csrf
+                                    <button id="checkout-button" type="submit"></button>
+                                </form>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -117,5 +122,59 @@
 
         </div>
         <!-- ./wrapper -->
+
+
+
+
     </body>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script type="text/javascript">
+        var stripe = Stripe("{{ env('STRIPE_KEY') }}");
+
+        function proceedToPayment() {
+            var checkoutButton = document.getElementById('checkout-button');
+            checkoutButton.click();
+        }
+
+        var checkoutButton = document.getElementById('checkout-button');
+
+        checkoutButton.addEventListener('click', function () {
+            // الحصول على معرفات المنتجات
+            var productIds = [];
+            @foreach ($cartproducts as $cartproduct)
+                productIds.push("{{ $cartproduct->product->id }}");
+            @endforeach
+
+            // إرسال الطلب إلى السيرفر لإنشاء جلسة Stripe
+            fetch('/session', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                body: JSON.stringify({
+                    product_ids: productIds,
+                    email: "{{ Auth::guard('customer')->user()->email }}",
+                    name: "{{ Auth::guard('customer')->user()->name }}",
+                    phone: "{{ Auth::guard('customer')->user()->phone }}"
+                }),
+            })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (sessionId) {
+               console.log(sessionId);
+
+                return stripe.redirectToCheckout({ sessionId: sessionId });
+            })
+            .then(function (result) {
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
+        });
+    </script>
 @endsection

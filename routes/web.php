@@ -5,6 +5,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Category;
@@ -56,9 +57,6 @@ Route::middleware('auth')->group(function () {
    Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('showdashboard');
    Route::get('/chart-product', [ProductController::class, 'getchart'])->name('chart-product');
    Route::get('/chart-earnings', [OrderController::class, 'chartearnings'])->name('chart-earnings');
-
-
-
 });
 
 require __DIR__ . '/auth.php';
